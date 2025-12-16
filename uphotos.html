@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>فهرسة الصور</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .note {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="file"], input[type="url"] {
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button.secondary {
+      background: #475569;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+    .card .name {
+      padding: 8px;
+      font-size: 13px;
+      text-align: center;
+      color: #cbd5f5;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📁 صفحة فهرسة الصور</h1>
+
+<div class="note">
+  ⚠️ <strong>مهم جداً:</strong><br>
+  HTML + JavaScript لا يمكنها رفع الملفات مباشرة إلى مستودع GitHub أو إنشاء مجلد <code>1/</code> تلقائياً بسبب قيود الأمان.<br><br>
+  هذه الصفحة تقوم بالآتي:
+  <ul>
+    <li>اختيار صور من جهازك أو عبر رابط</li>
+    <li>عرضها ومعاينتها</li>
+    <li>إنشاء <strong>هيكل مجلد جاهز</strong> للتنزيل (مجلد 1 + الصور)</li>
+  </ul>
+  ثم تقوم أنت برفع الناتج إلى GitHub.
+</div>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder="بحث باسم الصورة" oninput="render()" />
+  <button class="secondary" onclick="copyPageUrl()">نسخ رابط الصفحة</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+// جلب الصور من ملف images.json
+fetch('images.json')
+  .then(res => res.json())
+  .then(list => {
+    images = list.map(name => ({
+      name,
+      url: `1/${name}`
+    }));
+    render();
+  });
+
+function copyPageUrl() {
+  navigator.clipboard.writeText(location.href);
+  alert('تم نسخ رابط الصفحة');
+}
+
+  // الصور سيتم جلبها من مجلد 1 عبر ملف images.json
+let images = [];
+
+  const gallery = document.getElementById('gallery');
+  const fileInput = document.getElementById('fileInput');
+
+  // تم تعطيل الرفع المحلي – العرض يعتمد على صور GitHub فقط
+      images.push({ name: file.name, blob: file, preview: url });
+      render();
+    });
+  });
+
+  function addImageByUrl() {
+    const input = document.getElementById('urlInput');
+    if (!input.value) return;
+
+    const name = input.value.split('/').pop().split('?')[0] || 'image.jpg';
+    images.push({ name, url: input.value });
+    input.value = '';
+    render();
+  }
+
+  function render() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  gallery.innerHTML = '';
+
+  images
+    .filter(img => img.name.toLowerCase().includes(q))
+    .forEach(img => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const image = document.createElement('img');
+      image.src = img.url;
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = img.name;
+
+      const copy = document.createElement('button');
+      copy.textContent = 'نسخ الرابط';
+      copy.style.margin = '8px';
+      copy.onclick = () => {
+        navigator.clipboard.writeText(img.url);
+        alert('تم نسخ رابط الصورة');
+      };
+
+      card.appendChild(image);
+      card.appendChild(name);
+      card.appendChild(copy);
+      gallery.appendChild(card);
+    });
+}
+
+      }
+
+    const content = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(content);
+    a.download = 'images_package.zip';
+    a.click();
+  }
+</script>
+
+<!-- مكتبة ZIP -->
+
+
+</body>
+</html>
